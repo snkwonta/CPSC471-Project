@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
 
-const CueCardSchema = mongoose.Schema({
+const NoteSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
     },
     text: {
+        type: String,
+        required: true
+    },
+    courseId: {
+        type: String,
+        required: true
+    },
+    createdBy: {
         type: String,
         required: true
     },
@@ -15,4 +23,4 @@ const CueCardSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('CueCards', CueCardSchema);
+module.exports = mongoose.model('Notes', NoteSchema);

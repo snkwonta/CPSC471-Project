@@ -1,9 +1,21 @@
 const mongoose = require('mongoose');
 
 const CueCardCollectionSchema = mongoose.Schema({
-    collectionName: {
+    name: {
         type: String,
         required: true
+    },
+    createdBy: {
+        type: String,
+        required: true
+    },
+    courseId: {
+        type: String,
+        required: true
+    },
+    cueCards: {
+        type: Array,
+        default: []
     },
     dateCreated: {
         type: Date,

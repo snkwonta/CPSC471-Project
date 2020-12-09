@@ -9,6 +9,10 @@ const CueCardSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    collectionId: {
+        type: String,
+        required: true
+    },
     dateCreated: {
         type: Date,
         default: Date.now

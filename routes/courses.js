@@ -4,6 +4,44 @@ const User = require('../models/User');
 const verify = require('./verify');
 const {courseValidation} = require('../validation');
 
+// Get all courses
+router.get('/', async (req,res) => {
+    // TODO: Make it so that only teachers can do this?
+    try {
+        const courses = await Course.find();
+        res.json(courses);
+    } catch(err) {
+        res.json({message: err});
+    }
+});
+
+// Get a specific course
+router.get('/:courseId', async (req,res) => {
+    try {
+        // Find course
+        const course = await Course.findOne({_id : req.params.courseId});
+        if(!course) return res.status(400).send('Course ID does not exist');
+
+        res.json(course);
+    } catch(err) {
+        res.json({message: err});
+    }
+});
+
+// Get a student's courses
+router.get('/student/:userId', verify, async (req,res) => {
+    // TODO: Make sure student is the one getting his own course
+    try {
+        // Find course
+        const course = await Course.find({students : req.params.userId});
+        if(!course) return res.status(400).send('User ID does not exist, or user does not have any courses');
+
+        res.json(course);
+    } catch(err) {
+        res.json({message: err});
+    }
+});
+
 // Create a new course
 router.post('/create', verify, async (req,res) => {
     // Check if user is a teacher
@@ -68,5 +106,31 @@ router.post('/register', verify, async (req,res) => {
         }
     });
 });
+
+// Delete a specific course
+router.delete('/:courseId', async (req,res) => {
+    // TODO: Make sure user is a teacher who is teaching the courseId
+    try {
+        const removedCourse = await Course.remove({_id: req.params.courseId});
+        res.json(removedCourse);
+    } catch(err) {
+        res.json({message: err});
+    }
+});
+
+// Update a course
+router.patch('/:courseId', async (req,res) => {
+    // TODO: Make sure user is a teacher who is teaching the courseId
+    // And validate everything
+    try {
+        const updatedCourse = await Course.updateOne({_id: req.params.courseId}, 
+            { $set: 
+                { subject: req.body.subject, suffix: req.body.suffix, teacher: req.body.teacher }
+            });
+        res.json(updatedCourse);
+    } catch(err) {
+        res.json({message: err});
+    }
+})
 
 module.exports = router;
