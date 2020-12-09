@@ -130,6 +130,14 @@ To be able to run locally, place the `.env` file in the root directory.
 
 - Requires a valid teacher auth-token
 
+```json
+{
+	"subject": "math",
+	"suffix": "457",
+	"teacher": "5fccab98e3a1c724cc23caff"
+}
+```
+
 ---
 
 ## Exams

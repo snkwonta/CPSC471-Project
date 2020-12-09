@@ -85,6 +85,7 @@ router.post('/', verify, async (req,res) => {
     // Create event
     const event = new Event({
         subject: course.subject,
+        examName: req.body.name,
         dateDue: dateTime
     });
 
@@ -99,17 +100,41 @@ router.post('/', verify, async (req,res) => {
 });
 
 // Delete a specific exam
-router.delete('/:examID', async (req,res) => {
+router.delete('/:examID', verify, async (req,res) => {
+    // Check if user is a teacher
+    const user = await User.findOne({_id : req.user._id});
+    if(user.userType != 'teacher') return res.status(401).send('Access denied');
+
+    // Check if exam exists
+    const exam = await Exam.findById(req.params.examID);
+    if(!exam) return res.status(404).send('Exam ID not found');
+
+    // Check if teacher created exam
+    if(exam.createdBy != req.user._id) return res.status(400).send('Teacher did not create this exam');
+
     try {
-        const removedExam = await Exam.remove({_id: req.params.examID});
+        const removedExam = await Exam.remove({_id: req.params.examID}); // Remove exam
         res.json(removedExam);
+        const removedEvent = await Event.remove({examName : exam.name}); // Remove corresponding event
+        res.json(removedEvent);
     } catch(err) {
         res.json({message: err});
     }
 });
 
 // Update an exam
-router.patch('/:examID', async (req,res) => {
+router.patch('/:examID', verify, async (req,res) => {
+    // Check if user is a teacher
+    const user = await User.findOne({_id : req.user._id});
+    if(user.userType != 'teacher') return res.status(401).send('Access denied');
+
+    // Check if exam exists
+    const exam = await Exam.findById(req.params.examID);
+    if(!exam) return res.status(404).send('Exam ID not found');
+
+    // Check if teacher created exam
+    if(exam.createdBy != req.user._id) return res.status(400).send('Teacher did not create this exam');
+
     try {
         const updatedExam = await Exam.updateOne({_id: req.params.examID}, 
             { $set: 

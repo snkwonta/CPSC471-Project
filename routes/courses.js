@@ -106,7 +106,18 @@ router.post('/register', verify, async (req,res) => {
 });
 
 // Delete a specific course
-router.delete('/:courseId', async (req,res) => {
+router.delete('/:courseId', verify, async (req,res) => {
+    // Check if user is a teacher
+    const user = await User.findOne({_id : req.user._id});
+    if(user.userType != 'teacher') return res.status(401).send('Access denied');
+
+    // Check if course exists
+    const course = await Course.findById(req.params.courseId);
+    if(!course) return res.status(404).send('Course ID not found');
+
+    // Check if teacher is teaching course
+    if(course.teacher != req.user._id) return res.status(400).send('Teacher not teaching this course');
+
     try {
         const removedCourse = await Course.remove({_id: req.params.courseId});
         res.json(removedCourse);
@@ -116,7 +127,18 @@ router.delete('/:courseId', async (req,res) => {
 });
 
 // Update a course
-router.patch('/:courseId', async (req,res) => {
+router.patch('/:courseId', verify, async (req,res) => {
+    // Check if user is a teacher
+    const user = await User.findOne({_id : req.user._id});
+    if(user.userType != 'teacher') return res.status(401).send('Access denied');
+
+    // Check if course exists
+    const course = await Course.findById(req.params.courseId);
+    if(!course) return res.status(404).send('Course ID not found');
+
+    // Check if teacher is teaching course
+    if(course.teacher != req.user._id) return res.status(400).send('Teacher not teaching this course');
+
     try {
         const updatedCourse = await Course.updateOne({_id: req.params.courseId}, 
             { $set: 

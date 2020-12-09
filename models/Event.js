@@ -5,6 +5,10 @@ const EventSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    examName: {
+        type: String,
+        required: true
+    },
     dateDue: {
         type: Date,
         required: true
