@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Home</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <link href="/styles.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+
+        <h1>Notes App</h1>
+        <p>Welcome! Please log in below.</p>
+
+        <div id="homepage">
+            <h2>Login</h2>
+            <div id="login"></div>
+        </div>
+
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <script src="https://unpkg.com/react@15/dist/react.js"></script>
+        <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+
+        <script type="text/babel">
+            let loginForm = React.createClass({
+                getInitialState: function(){
+                    return({
+                        user: []
+                    });
+                },
+                render: function(){
+                    let user = this.state.user;
+
+                    return(
+                        <div id="login-container">
+                            <label for="uname"><b>Username</b></label>
+                            <input type="text" placeholder="Enter Username" ref="uname" name="uname" required></input>
+
+                            <label for="psw"><b>Password</b></label>
+                            <input type="password" placeholder="Enter Password" ref="psw" name="psw" required></input>
+
+                            <button type="submit" id="login" onSubmit={this.handleSubmit}>Login</button>
+                            <ul>{user}</ul>
+                        </div>
+                    );
+                },
+
+                handleSubmit: function(e){
+                    e.preventDefault();
+                    let uname = this.refs.uname.value;
+                    let psw = this.refs.psw.value;
+
+                    fetch('/api/user/login?email='+uname+'&password='+psw).then(function(data){
+                        return data.json();
+                    }).then( json => {
+                        this.setState({
+                            user: json
+                        });
+                    });
+                }
+            });
+
+            ReactDOM.render(<loginForm/>, document.getElementById('login'));
+        </script>
+
+    </body>
+</html>

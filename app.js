@@ -9,6 +9,8 @@ const usersRoute = require('./routes/users');
 const authRoute = require('./routes/auth');
 const examsRoute = require('./routes/exams');
 const coursesRoute = require('./routes/courses');
+const eventsRoute = require('./routes/events');
+const notesRoute = require('./routes/notes');
 
 // Connect to DB
 mongoose.connect(
@@ -17,7 +19,10 @@ mongoose.connect(
     () => console.log('Connected to DB')
 );
 
+app.set('view engine', 'ejs');
+
 // Middleware
+app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(express.json());
 // Route Middlewares
@@ -25,10 +30,13 @@ app.use('/users', usersRoute);
 app.use('/api/user', authRoute);
 app.use('/api/exams', examsRoute);
 app.use('/api/courses', coursesRoute);
+app.use('/api/events', eventsRoute);
+app.use('/api/notes', notesRoute);
 
 // Routes
 app.get('/', (req,res) => {
     res.send('Homepage');
+    // res.render('index');
 });
 
 // Listening on port 3000

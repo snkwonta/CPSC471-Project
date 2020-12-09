@@ -4,6 +4,17 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const {registerValidation, loginValidation} = require('../validation');
 
+// Get all users
+router.get('/', async (req,res) => {
+    // TODO: Make it so that only teachers can do this?
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch(err) {
+        res.json({message: err});
+    }
+});
+
 // Register User
 router.post('/register', async (req,res) => {
     // Validate data before adding user
@@ -51,6 +62,32 @@ router.post('/login', async (req,res) => {
     const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
     res.header('auth-token', token).send(token);
 });
+
+// Delete a specific user
+router.delete('/:userId', async (req,res) => {
+    // TODO: Make it so only a teacher can do this?
+    try {
+        const removedUser = await User.remove({_id: req.params.userId});
+        res.json(removedUser);
+    } catch(err) {
+        res.json({message: err});
+    }
+});
+
+// Update a user
+router.patch('/:userId', async (req,res) => {
+    // TODO: Make it so only a teacher can do this?
+    // And validate everything
+    try {
+        const updatedUser = await User.updateOne({_id: req.params.userId}, 
+            { $set: 
+                { email: req.body.email, userType: req.body.userType }
+            });
+        res.json(updatedUser);
+    } catch(err) {
+        res.json({message: err});
+    }
+})
 
 
 module.exports = router;
