@@ -91,18 +91,26 @@ To be able to run locally, place the `.env` file in the root directory.
 
 ### Get A Student's Courses
 
-`GET http://localhost:3000/api/courses/student/:userId`
-
 - Requires a valid student auth-token
 - `:userId` must be an existing user ID
 - Returns a JSON object of the specific courses
 
+`GET http://localhost:3000/api/courses/student/:userId`
+
 ### Create A New Course
+
+`POST http://localhost:3000/api/courses/create`
 
 - Requires a valid teacher auth-token
 - Requires for teacher to not be teaching any other courses
 
-`POST http://localhost:3000/api/courses/create`
+```json
+{
+	"semester": "winter",
+	"subject": "cpsc",
+	"suffix": "471"
+}
+```
 
 ### Register For A Course
 
@@ -154,6 +162,15 @@ To be able to run locally, place the `.env` file in the root directory.
 - Requires a valid teacher auth-token
 - Requires for teacher to be teaching a course
 - Also creates a corresponding event for the exam
+
+```json
+{
+	"name": "Quiz 2",
+	"topics": ["a", "b"],
+	"examType": "quiz",
+	"dateTime": "01 Jan 2021 00:00:00 GMT"
+}
+```
 
 ### Delete An Exam
 
@@ -258,6 +275,14 @@ To be able to run locally, place the `.env` file in the root directory.
 ### Create A New Note
 
 `POST http://localhost:3000/api/notes/note`
+
+```json
+{
+	"name": "New Note",
+	"text": "This is a note",
+	"courseId": "5fd007e5e5ac8dcb529325f5"
+}
+```
 
 ### Delete A Specific Note
 
