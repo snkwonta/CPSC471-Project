@@ -9,7 +9,6 @@ const {cueCardCollectionValidation, cueCardValidation, noteValidation} = require
 
 // Get all cue card collections
 router.get('/cuecardcollection', async (req,res) => {
-    // TODO: Make it so that only teachers can do this?
     try {
         const cueCardCollections = await CueCardCollection.find();
         res.json(cueCardCollections);
@@ -42,9 +41,7 @@ router.post('/cuecardcollection', verify, async (req,res) => {
     const course = await Course.findOne({_id : req.body.courseId});
     if(!course) return res.status(404).send('Course ID not found');
 
-    // Check if user is a part of that course
-    // if user.id in course.students then we good
-
+    // Check if user is a part of that course (if user.id in course.students)
     // Validate cue card collection data
     const {error} = cueCardCollectionValidation(req.body);
     if(error) return res.status(400).send(error.details[0].message);
@@ -99,6 +96,9 @@ router.patch('/cuecardcollection/:collectionId', verify, async (req,res) => {
     // Verify cue card collection ID
     const cueCardCollection = await CueCardCollection.findOne({_id : req.params.collectionId});
     if(!cueCardCollection) return res.status(404).send('Cue card collection ID not found');
+
+    // Check if user created this cue card collection
+    if(cueCardCollection.createdBy != req.user._id) return res.status(400).send('User does now own this collection');
 
     try {
         const updatedCueCardCollection = await CueCardCollection.updateOne({_id: req.params.collectionId}, 
@@ -165,8 +165,6 @@ router.delete('/cuecard/:cardId', verify, async (req,res) => {
     const cueCard = await CueCard.findOne({_id : req.params.cardId});
     if(!cueCard) return res.status(404).send('Cue card ID not found');
 
-    // TODO: Check if user created this cue card
-
     try {
         const removedCueCard = await CueCard.remove({_id: req.params.cardId});
         res.json(removedCueCard);
@@ -177,6 +175,10 @@ router.delete('/cuecard/:cardId', verify, async (req,res) => {
 
 // Update a cue card
 router.patch('/cuecard/:cardId', verify, async (req,res) => {
+    // Check if user is a student
+    const user = await User.findOne({_id : req.user._id});
+    if(user.userType != 'student') return res.status(401).send('User is not a student');
+
     // Verify cue card collection ID
     const cueCard = await CueCard.findOne({_id : req.params.cardId});
     if(!cueCard) return res.status(404).send('Cue card ID not found');

@@ -8,12 +8,25 @@
     </head>
     <body>
 
-        <h1>Notes App</h1>
+        <img src="logo.png" width="50%" height="50%"/>
+
+        <h1>Easy Schedule</h1>
         <p>Welcome! Please log in below.</p>
 
         <div id="homepage">
-            <h2>Login</h2>
+            <!-- <h2>Login</h2> -->
+            
             <div id="login"></div>
+            <div id="login-container">
+                <label for="uname"><b>Username</b></label>
+                <input type="text" placeholder="Enter Username" ref="uname" name="username1" required></input>
+                <br><br>
+                <label for="psw"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" ref="psw" name="password" required></input>
+                <br><br>
+
+                <button type="submit" id="login" onSubmit={this.handleSubmit}>Login</button>
+            </div>
         </div>
 
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>

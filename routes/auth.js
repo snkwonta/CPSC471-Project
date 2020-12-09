@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const verify = require('./verify');
 const {registerValidation, loginValidation} = require('../validation');
 
 // Get all users
@@ -66,8 +67,15 @@ router.post('/login', async (req,res) => {
 });
 
 // Delete a specific user
-router.delete('/:userId', async (req,res) => {
-    // TODO: Make it so only a teacher can do this?
+router.delete('/:userId', verify, async (req,res) => {
+    // Check if user is a teacher
+    const ctxUser = await User.findOne({_id : req.user._id});
+    if(ctxUser.userType != 'teacher') return res.status(401).send('Access denied');
+
+    // Check if given user ID exists
+    const user = await User.findById(req.params.userId);
+    if(!user) return res.status(404).send('User ID not found');
+
     try {
         const removedUser = await User.remove({_id: req.params.userId});
         res.json(removedUser);
@@ -77,9 +85,14 @@ router.delete('/:userId', async (req,res) => {
 });
 
 // Update a user
-router.patch('/:userId', async (req,res) => {
-    // TODO: Make it so only a teacher can do this?
-    // And validate everything
+router.patch('/:userId', verify, async (req,res) => {
+    // Check if valid user ID
+    const user = await User.findOne({_id : req.params.userId});
+    if(!user) return res.status(404).send('User ID not found');
+
+    // Check if user has same ID as provided ID
+    if(req.params.userId != req.user._id) return res.status(400).send('User trying to update account they do not own');
+
     try {
         const updatedUser = await User.updateOne({_id: req.params.userId}, 
             { $set: 
