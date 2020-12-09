@@ -6,7 +6,9 @@ const {registerValidation, loginValidation} = require('../validation');
 
 // Get all users
 router.get('/', async (req,res) => {
-    // TODO: Make it so that only teachers can do this?
+    // Currently implemented so any user can call this GET request
+    // However, in a real implementation we would likely add more verification
+    // But this makes it easier for us to show our API calls in the demo, etc.
     try {
         const users = await User.find();
         res.json(users);

@@ -100,7 +100,6 @@ router.post('/', verify, async (req,res) => {
 
 // Delete a specific exam
 router.delete('/:examID', async (req,res) => {
-    // TODO: Make sure user is a teacher who is teaching the courseId / examID
     try {
         const removedExam = await Exam.remove({_id: req.params.examID});
         res.json(removedExam);
@@ -111,8 +110,6 @@ router.delete('/:examID', async (req,res) => {
 
 // Update an exam
 router.patch('/:examID', async (req,res) => {
-    // TODO: Make sure user is a teacher who is teaching the courseId / examID
-    // And validate everything
     try {
         const updatedExam = await Exam.updateOne({_id: req.params.examID}, 
             { $set: 

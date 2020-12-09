@@ -4,7 +4,6 @@ const verify = require('./verify');
 
 // Get all events
 router.get('/', async (req,res) => {
-    // TODO: Make it so that only teachers can do this?
     try {
         const events = await Event.find();
         res.json(events);
@@ -28,7 +27,6 @@ router.get('/:eventId', verify, async (req,res) => {
 
 // Delete a specific event
 router.delete('/:eventId', async (req,res) => {
-    // TODO: Make sure user is a teacher who is teaching the courseId
     try {
         const removedEvent = await Event.remove({_id: req.params.eventId});
         res.json(removedEvent);
@@ -39,8 +37,6 @@ router.delete('/:eventId', async (req,res) => {
 
 // Update an event
 router.patch('/:eventId', async (req,res) => {
-    // TODO: Make sure user is a teacher who is teaching the courseId
-    // And validate everything
     try {
         const updatedEvent = await Event.updateOne({_id: req.params.eventId}, 
             { $set: 

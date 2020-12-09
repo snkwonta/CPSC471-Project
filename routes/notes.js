@@ -192,7 +192,6 @@ router.patch('/cuecard/:cardId', verify, async (req,res) => {
 
 // Get all notes
 router.get('/note', async (req,res) => {
-    // TODO: Make it so that only teachers can do this?
     try {
         const notes = await Note.find();
         res.json(notes);
