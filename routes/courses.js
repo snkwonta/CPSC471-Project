@@ -89,8 +89,11 @@ router.post('/register', verify, async (req,res) => {
     if(!courseExists) return res.status(403).send("Course does not exist");
 
     // Check if student is already enrolled in the course
-    const course = await Course.findOne({semester : req.body.semester, subject : req.body.subject, suffix : req.body.suffix});
+    // let year = new Date().getFullYear();
+    const course = await Course.findOne({subject : req.body.subject, suffix : req.body.suffix});
     if(course.students.includes(req.user._id)) return res.status(403).send('Student already enrolled in course');
+
+    console.log(course._id)
 
     // Update course
     router.patch('/:courseId', async (req,res) => {

@@ -243,7 +243,7 @@ router.delete('/note/:noteId', verify, async (req,res) => {
     if(!note) return res.status(404).send('Note ID not found');
 
     // Check if user created this note
-    if(cueCardCollection.createdBy != req.user._id) return res.status(400).send('User does now own this note');
+    if(note.createdBy != req.user._id) return res.status(400).send('User does now own this note');
 
     try {
         const removedNote = await Note.remove({_id: req.params.noteId});
